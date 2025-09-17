@@ -1,5 +1,5 @@
 {
     "board": "arduino:renesas_uno:unor4wifi",
     "port": "COM3",
-    "sketch": "tests\\test\\test.ino"
+    "sketch": "tests/buzzer/buzzer.ino"
 }
