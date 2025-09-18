@@ -1,5 +1,5 @@
 {
     "board": "arduino:renesas_uno:unor4wifi",
-    "port": "COM3",
+    "port": "COM5",
     "sketch": "tests/display/display.ino"
 }
