@@ -7,8 +7,9 @@ def inputdata():
 
     distance = yaw * 300 // 180
 
-    return f"{yaw},{distance}"
+    return f"({yaw},{distance})"
 
 if __name__ == "__main__":
     while True:
         print(inputdata())
+

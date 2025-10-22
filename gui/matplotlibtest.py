@@ -7,19 +7,20 @@ ax = plt.subplot(111, polar=True)
 ax.set_xlim(0, np.pi)
 ax.set_ylim(0, 1)
 
-yaw = [list(np.linspace(0, np.pi, 180)), list(np.linspace(np.pi, 0, 179))]
-distance = np.linspace(0, 1, 180)
+yaw = np.linspace(0, np.pi, 180)
+distance = np.linspace(0, 1, 180) 
 currentyaw = 0
 anticlockwise = True
 
 def update(frame):
-    global currentyaw, vline()
+    global currentyaw, vline
     vline.remove()
-    currentyaw += 180/np.pi
+    currentyaw += np.deg2rad(2)
     vline = plt.axvline(currentyaw, color="black")
+    return vline,
 
-plt.bar(yaw, distance, 1, label="1")
+plt.bar(yaw, distance, 1)
 vline = plt.axvline(currentyaw, color="black")
-anim = animation.FuncAnimation(fig, update, interval=0)
+anim = animation.FuncAnimation(fig, update, interval=50)
 
 plt.show()
