@@ -19,10 +19,9 @@ void setup() {
 }
 
 void loop() {
-  char lastsdfsdfsdfsdf
   //yaw = servo.read();
-  dist = sonar.MeasureInCentimeters();
-  pot = analogRead(p_pot) * 180 / 1023;
+  int dist = sonar.MeasureInCentimeters();
+  int pot = analogRead(p_pot) * 180 / 1023;
 
   char output[1000] = "";
   //char yawstr[1000];

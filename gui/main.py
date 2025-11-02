@@ -6,7 +6,7 @@ import time
 import tester
 
 testing = False
-monitor = serial.Serial("COM3")
+monitor = serial.Serial("COM5")
 buffer = ""
 
 def last_serial_line():
