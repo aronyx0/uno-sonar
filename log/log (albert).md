@@ -25,3 +25,7 @@
 **2025/nov/02**:
 > Logboek geüpdate vanaf locaal bestand
 > Grafiek laat nu gaten zien door lage updatetijd, dat aan het fixen
+
+**2025/nov/05**:
+> Grafiek rendert nu sneller, en met markers i.p.v. een lijn, zodat "stray" punten niet meer zo significant zijn.
+> Grafiek heeft nu ook kleurenverdeling voor afstand; punten ver weg zijn blauw, en punten dicht bij zijn rood.

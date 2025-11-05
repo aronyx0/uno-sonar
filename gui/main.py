@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as anim
 import matplotlib.style as style
 import matplotlib.container as cont
+import matplotlib.colors as mplcolors
 import time
 import tester
 
@@ -12,6 +13,7 @@ if not testing:
     monitor = serial.Serial("COM5")
 buffer = ""
 yawdist = {90: 100}
+colormap = mplcolors.LinearSegmentedColormap.from_list("", ["firebrick","orange", "green","mediumblue"])
 
 def last_serial_line():
     global buffer, monitor
@@ -72,7 +74,7 @@ def graph_animate():
     animation = anim.FuncAnimation(fig, update, interval=20, cache_frame_data=False)
 
 def animate_v2(frame) -> tuple:
-    global fig, data, yawdist, vline, graph, ax
+    global fig, data, yawdist, vline, graph, ax, colormap
     vline.remove()
     graph.remove()
     ax.set_xlim(0, np.pi)
@@ -87,9 +89,10 @@ def animate_v2(frame) -> tuple:
     vline = ax.axvline(np.deg2rad(theta_now), color="black")
     graph = ax.scatter([np.deg2rad(item) for item in list(yawdist.keys())],
                        list(yawdist.values()),
-                       color="green",
                        s=6,
-                       marker="x")
+                       marker="x",
+                       c=list(yawdist.values()),
+                       cmap=colormap)
     return graph, vline
 
 if __name__ == "__main__":
