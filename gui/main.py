@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as anim
 import matplotlib.style as style
+import matplotlib.container as cont
 import time
 import tester
 
@@ -39,7 +40,7 @@ class ArduinoData:
         self.distance = datastr[1]
 
 def graph_init(data: "ArduinoData") -> None:
-    global fig, ax, theta, theta_now, r, r_now, vline, graph
+    global fig, ax, theta_now, r_now, vline, graph, yawdist
     fig = plt.figure(figsize=(6, 6))
     ax = plt.subplot(111, polar=True)
     ax.set_xlim(0, np.pi)
@@ -48,34 +49,58 @@ def graph_init(data: "ArduinoData") -> None:
     theta_now = data.yaw
     r_now = data.distance
     vline = ax.axvline(theta_now, color="black")
-    graph = ax.bar([], [], np.deg2rad(1), color="green")
+    graph = ax.scatter([], [], color="green")
 
 def graph_animate():
     global fig, animation
     def update(frame) -> tuple:
         global theta_now, vline, graph, data, yawdist
-        data.update()
         vline.remove()
+        graph.remove()
 
-        theta_now = np.deg2rad(data.yaw)
+        theta_now = data.yaw
         r_now = data.distance
         yawdist[theta_now] = r_now
-        theta = list(yawdist.keys())
+        theta = [np.deg2rad(value) for value in list(yawdist.keys())]
         r = list(yawdist.values())
 
-        vline = plt.axvline(theta_now, color="black")
-        print(graph)
+        vline = ax.axvline(np.deg2rad(theta_now), color="black")
+        graph = ax.plot(theta, r, np.deg2rad(1), color="green")
         return vline, graph
 
     style.use("fast")
     animation = anim.FuncAnimation(fig, update, interval=20, cache_frame_data=False)
 
+def animate_v2(frame) -> tuple:
+    global fig, data, yawdist, vline, graph, ax
+    vline.remove()
+    graph.remove()
+    ax.set_xlim(0, np.pi)
+    ax.set_ylim(0, 300)
+    
+    data.update()
+    theta_now = data.yaw
+    r_now = data.distance
+
+    yawdist[theta_now] = r_now
+
+    vline = ax.axvline(np.deg2rad(theta_now), color="black")
+    graph = ax.scatter([np.deg2rad(item) for item in list(yawdist.keys())],
+                       list(yawdist.values()),
+                       color="green",
+                       s=6,
+                       marker="x")
+    return graph, vline
+
 if __name__ == "__main__":
     try:
         data = ArduinoData()
         graph_init(data)
-        graph_animate()
+        #graph_animate()
+        style.use("fast")
+        animation = anim.FuncAnimation(fig, animate_v2, interval=10, cache_frame_data=False, blit=True)
         plt.show()
+        
     except KeyboardInterrupt:
         plt.close()
         exit()

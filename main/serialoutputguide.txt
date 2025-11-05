@@ -1,1 +1,1 @@
-(yaw in rad (float 5 decimals), distance in cm (integer))
+(yaw in deg (integer), distance in cm (integer))

@@ -1,11 +1,12 @@
 import time
+import random
 
 def inputdata():
     ms = int(time.time() * 1000)
     yaw = (ms % 6000) * 360 // 6000
     if yaw > 180: yaw = 360 - yaw
 
-    distance = yaw * 300 // 180
+    distance = round((yaw * 300 / 180) * (random.randint(8, 10)/10))
 
     return f"({yaw},{distance})"
 

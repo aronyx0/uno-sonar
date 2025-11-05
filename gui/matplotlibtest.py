@@ -12,15 +12,11 @@ distance = np.linspace(0, 1, 180)
 currentyaw = 0
 anticlockwise = True
 
-def update(frame):
-    global currentyaw, vline
-    vline.remove()
-    currentyaw += np.deg2rad(2)
-    vline = plt.axvline(currentyaw, color="black")
-    return vline,
-
-plt.bar(yaw, distance, 1)
-vline = plt.axvline(currentyaw, color="black")
-anim = animation.FuncAnimation(fig, update, interval=50)
+graph = ax.bar(yaw, distance, 1)
+vline = ax.axvline(currentyaw, color="black")
+with open("gui/out.txt", "w") as file:
+    file.write(str([str(item) for item in list(iter(graph))]))
+with open("gui/out.txt", "r") as file:
+    print(len(eval(file.read())))
 
 plt.show()
