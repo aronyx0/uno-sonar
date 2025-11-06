@@ -25,17 +25,10 @@ void loop() {
 
   char output[1000] = "";
   //char yawstr[1000];
-  char diststr[1000];
-  char potstr[1000];
-  //sprintf(yawstr, "%d", yaw);
-  sprintf(diststr, "%d", dist);
-  sprintf(potstr, "%d", pot);
 
-  strcat(output, "(");
-  strcat(output, potstr);
-  strcat(output, ", ");
-  strcat(output, diststr);
-  strcat(output, ")");
+  //sprintf(yawstr, "%d", yaw);
+  sprintf(output, "(%d, %d)", pot, dist);
+  // (%d, %d)
 
   /*
   Serial.print("(");
@@ -48,5 +41,5 @@ void loop() {
 
   Serial.println(output);
 
-  delay(30);
+  delay(50);
 }

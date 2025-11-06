@@ -1,1 +1,1 @@
-(yaw in deg (integer), distance in cm (integer))
+(yaw in deg (3 number integer, with trailing zero if needed), distance in cm (3 number integer, with trailing zero if needed))

@@ -8,22 +8,12 @@ import matplotlib.colors as mplcolors
 import time
 import tester
 
-testing = True
+testing = False
 if not testing:
     monitor = serial.Serial("COM5")
 buffer = ""
 yawdist = {90: 100}
 colormap = mplcolors.LinearSegmentedColormap.from_list("", ["firebrick","orange", "green","mediumblue"])
-
-def last_serial_line():
-    global buffer, monitor
-    buffer += str(monitor.read(monitor.in_waiting))
-    if "\n" in buffer:
-        lines = buffer.split("\n")
-        buffer = lines[-1]
-        return lines[-2]
-    else:
-        return buffer
 
 class ArduinoData:
     def __init__(self) -> None:
@@ -36,7 +26,7 @@ class ArduinoData:
         if testing:
             datastr = tester.inputdata()
         else:
-            datastr = str(eval(last_serial_line()))
+            datastr = monitor.readline().decode()
         datastr = eval(datastr)
         self.yaw = datastr[0]
         self.distance = datastr[1]
