@@ -27,5 +27,11 @@
 > Grafiek laat nu gaten zien door lage updatetijd, dat aan het fixen
 
 **2025/nov/05**:
-> Grafiek rendert nu sneller, en met markers i.p.v. een lijn, zodat "stray" punten niet meer zo significant zijn.
-> Grafiek heeft nu ook kleurenverdeling voor afstand; punten ver weg zijn blauw, en punten dicht bij zijn rood.
+> Grafiek rendert nu sneller, en met markers i.p.v. een lijn, zodat "stray" punten niet meer zo significant zijn
+> Grafiek heeft nu ook kleurenverdeling voor afstand; punten ver weg zijn blauw, en punten dicht bij zijn rood
+
+**2025/nov/06**:
+> Grote bug gefixt die ervoor zorgde dat het programma soms niet werkte
+> * `eval()` moest toch `.decode()` zijn bij `monitor.readline()`
+> Oude frame update-functie verwijderd
+> Start gemaakt met `tkinter` in main.py te verwerken
