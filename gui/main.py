@@ -20,7 +20,7 @@ yawdist = {90: 100}
 colormap = mplcolors.LinearSegmentedColormap.from_list("", ["firebrick","orange", "green","mediumblue"])
 
 class ArduinoData:
-    def __init__(self, testing: bool = False, comport: str = None) -> None:
+    def __init__(self, testing: bool = False, comport: str = "COM1") -> None:
         self.testing = testing
         self.comport = comport
         self.update()
@@ -91,12 +91,24 @@ def render_graph_window() -> None:
     height = 576
     root.minsize(width, height)
 
-    comport_menu = tk.Listbox(root)
+    comport_menu_button = ttk.Menubutton(root, text="Choose a COM port")
+    comport_menu = tk.Menu(comport_menu_button, tearoff=False)
     comports = serial.tools.list_ports.comports()
+    chosen_port = tk.StringVar()
     for port in comports:
-        comport_menu.insert("end", port)
-    comport_menu.pack()
+        comport_menu.add_radiobutton(label=port.description, value=port.device, variable=chosen_port)
+    comport_menu.add_radiobutton(label="Testing mode", value="test", variable=chosen_port)
+    comport_menu_button["menu"] = comport_menu
+    comport_menu_button.pack()
     print(comports)
+
+    def update_label():
+        global chosen_port_str
+        chosen_port_str = chosen_port.get()
+    chosen_port_str = "None chosen"
+    label = ttk.Label(root, text=chosen_port_str)
+    test_button = ttk.Button(root, text="test", command=update_label)
+    test_button.pack()
 
     start_button = ttk.Button(root, text="Start", command=lambda: [start_graph(), start_button.pack_forget()])
     start_button.pack()
@@ -110,6 +122,8 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         root.destroy()
         exit()
+    #except Exception as e:
+
 
     """try:
         data = ArduinoData()
