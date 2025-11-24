@@ -1,7 +1,6 @@
 import serial
 import serial.tools.list_ports
 import numpy as np
-import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.animation as anim
 import matplotlib.style as style
@@ -9,14 +8,13 @@ import matplotlib.colors as mplcolors
 import matplotlib.backends.backend_tkagg as mpl_backend
 import tkinter as tk
 from tkinter import ttk
+from tkinter import messagebox
+import pathlib
+import os
 
 import tester
 
-testing = True
-if not testing:
-    monitor = serial.Serial("COM5")
-buffer = ""
-yawdist = {90: 100}
+yawdist = {0: 0}
 colormap = mplcolors.LinearSegmentedColormap.from_list("", ["firebrick","orange", "green","mediumblue"])
 
 class ArduinoData:
@@ -29,9 +27,10 @@ class ArduinoData:
         return f"({self.yaw}, {self.distance}) @ COM{self.comport}"
 
     def update(self) -> None:
-        if testing:
+        if self.testing:
             datastr = tester.inputdata()
         else:
+            monitor = serial.Serial(self.comport)
             datastr = monitor.readline().decode()
         datastr = eval(datastr)
         self.yaw = datastr[0]
@@ -49,8 +48,18 @@ def graph_init_p2() -> None:
 
 def animate(frame) -> tuple:
     global fig, data, yawdist, vline, graph, ax, colormap
-    vline.remove()
-    graph.remove()
+    # Safely remove previous artists if they still exist on the axes.
+    # Removing an artist that's no longer present raises ValueError: list.remove(x): x not in list
+    try:
+        if 'vline' in globals() and vline is not None and vline in ax.lines:
+            vline.remove()
+    except Exception:
+        pass
+    try:
+        if 'graph' in globals() and graph is not None and graph in ax.collections:
+            graph.remove()
+    except Exception:
+        pass
     ax.set_xlim(0, np.pi)
     ax.set_ylim(0, 300)
     
@@ -69,9 +78,8 @@ def animate(frame) -> tuple:
                        cmap=colormap)
     return graph, vline
 
-def start_graph() -> None:
-    global data, root, fig, vline, r_now, theta_now, graph, animation
-    data = ArduinoData()
+def start_graph(data: "ArduinoData") -> None:
+    global root, fig, vline, r_now, theta_now, graph, animation
     graph_init(data)
     canvas = mpl_backend.FigureCanvasTkAgg(fig, root)
     canvas.draw()
@@ -79,10 +87,9 @@ def start_graph() -> None:
     graph_init_p2()
     theta_now = data.yaw
     r_now = data.distance
-    vline = ax.axvline(theta_now, color="black")
+    vline = ax.axvline(np.deg2rad(theta_now), color="black")
     graph = ax.scatter([], [], color="green")
     style.use("fast")
-    animation = anim.FuncAnimation(fig, animate, interval=10, cache_frame_data=False, blit=True)
 
 def render_graph_window() -> None:
     global root
@@ -94,26 +101,47 @@ def render_graph_window() -> None:
     comport_menu_button = ttk.Menubutton(root, text="Choose a COM port")
     comport_menu = tk.Menu(comport_menu_button, tearoff=False)
     comports = serial.tools.list_ports.comports()
-    chosen_port = tk.StringVar()
+    chosen_port = tk.StringVar(root)
+    chosen_port.set("Testing")
+
+    def update_label(*args):
+        comport_menu_button.config(text=chosen_port.get())
+
+    chosen_port.trace_add("write", update_label)
     for port in comports:
         comport_menu.add_radiobutton(label=port.description, value=port.device, variable=chosen_port)
-    comport_menu.add_radiobutton(label="Testing mode", value="test", variable=chosen_port)
+    comport_menu.add_radiobutton(label="Testing mode", value="Testing", variable=chosen_port)
     comport_menu_button["menu"] = comport_menu
     comport_menu_button.pack()
-    print(comports)
-
-    def update_label():
-        global chosen_port_str
-        chosen_port_str = chosen_port.get()
-    chosen_port_str = "None chosen"
-    label = ttk.Label(root, text=chosen_port_str)
-    test_button = ttk.Button(root, text="test", command=update_label)
+        
+    """label = ttk.Label(root, text="None chosen")
+    test_button = ttk.Button(root, text="test", command=lambda: update_label(chosen_port, comport_menu_button))
     test_button.pack()
+    label.pack()"""
 
-    start_button = ttk.Button(root, text="Start", command=lambda: [start_graph(), start_button.pack_forget()])
+    def forget_ui(*args: tk.Widget) -> None:
+        for arg in args:
+            arg.pack_forget()       
+
+    def start_button_func(comport: str) -> None:
+        global data, animation
+        if comport == "Testing":
+            data = ArduinoData(True)
+        else:
+            data = ArduinoData(False, comport)
+        start_graph(data)
+        update_label()
+        animation = anim.FuncAnimation(fig, animate, interval=20, cache_frame_data=False, blit=True)
+
+    start_button = ttk.Button(root, text="Start", command=lambda: [start_button_func(chosen_port.get()), forget_ui(comport_menu, comport_menu_button, start_button)])
     start_button.pack()
 
+    root.title("Arduino Uno Sonar")
+    current_dir = pathlib.Path(__file__).parent.resolve() # current directory
+    img_path = os.path.join(current_dir, "icon.ico")
+    root.iconbitmap(img_path)
     root.protocol("WM_DELETE_WINDOW", lambda: [root.destroy(), exit()])
+    root.report_callback_exception = lambda exc, val, tb: messagebox.showerror("An error occured", val)
     root.mainloop()
 
 if __name__ == "__main__":
@@ -122,7 +150,8 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         root.destroy()
         exit()
-    #except Exception as e:
+    except Exception as e:
+        messagebox.showerror("An error occured", e)
 
 
     """try:
