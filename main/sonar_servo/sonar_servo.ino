@@ -14,18 +14,16 @@ int now_mili = 0;
 int last_mili = 0;
 
 void setup() {
-    Serial.begin(9600, SERIAL_8N2);
+    Serial.begin(9600);
     yaw.attach(9);
-    char output[1000] = "";
 }
 
 void loop() {
     distance = sonar.MeasureInCentimeters();
-
+      char output[1000] = "";    
     for (int deg = 0; deg <= 180; deg += 10) {
       distance = sonar.MeasureInCentimeters();
       yaw.write(deg);
-      char output[1000] = "";
       delay(degree_delay);
       sprintf(output, "(%d, %d)", deg, distance);
       Serial.println(output);
@@ -35,7 +33,6 @@ void loop() {
     for (int deg = 180; deg >= 0; deg -= 10) {
       distance = sonar.MeasureInCentimeters();
       yaw.write(deg);
-      char output[1000] = "";
       delay(degree_delay);
       sprintf(output, "(%d, %d)", deg, distance);
       Serial.println(output);
