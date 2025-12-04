@@ -1,1 +1,0 @@
-Een SONAR-systeem met interface die  positie van objecten laat zien, wat mogelijk uigebreid wordt tot home security-systeem

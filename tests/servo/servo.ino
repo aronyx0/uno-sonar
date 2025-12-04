@@ -11,16 +11,14 @@ void setup() {
 }
 
 void loop() {
-    for (int deg = 0; deg <= 180; deg += 1) {
-      yaw.write(deg);
-      delay(degree_delay);
-      Serial.println(yaw.read());
-    } 
-    delay(sweep_delay);
-    for (int deg = 180; deg >= 0; deg -= 1) {
+    for (int deg = 0; deg < 180; deg += 1) {
       yaw.write(deg);
       delay(degree_delay);
       Serial.println(yaw.read());
     }
-    delay(sweep_delay);
+    for (int deg = 179; deg >= 0; deg -= 1) {
+      yaw.write(deg);
+      delay(degree_delay);
+      Serial.println(yaw.read());
+    }
 }

@@ -30,7 +30,7 @@ class ArduinoData:
         if self.testing:
             datastr = tester.inputdata()
         else:
-            monitor = serial.Serial(self.comport)
+            monitor = serial.Serial(self.comport, 115200, timeout=5)
             datastr = monitor.readline().decode()
         datastr = eval(datastr)
         self.yaw = datastr[0]
@@ -48,8 +48,14 @@ def graph_init_p2() -> None:
 
 def animate(frame) -> tuple:
     global fig, data, yawdist, vline, graph, ax, colormap
-    # Safely remove previous artists if they still exist on the axes.
-    # Removing an artist that's no longer present raises ValueError: list.remove(x): x not in list
+
+    data.update()
+    if data.distance >= 300:
+        return graph, vline
+
+    theta_now = data.yaw
+    r_now = data.distance
+
     try:
         if 'vline' in globals() and vline is not None and vline in ax.lines:
             vline.remove()
@@ -63,9 +69,7 @@ def animate(frame) -> tuple:
     ax.set_xlim(0, np.pi)
     ax.set_ylim(0, 300)
     
-    data.update()
-    theta_now = data.yaw
-    r_now = data.distance
+    
 
     yawdist[theta_now] = r_now
 
@@ -141,7 +145,7 @@ def render_graph_window() -> None:
     img_path = os.path.join(current_dir, "icon.ico")
     root.iconbitmap(img_path)
     root.protocol("WM_DELETE_WINDOW", lambda: [root.destroy(), exit()])
-    root.report_callback_exception = lambda exc, val, tb: messagebox.showerror("An error occured", val)
+    root.report_callback_exception = lambda exc, val, tb: messagebox.showerror("An error occured", str(val))
     root.mainloop()
 
 if __name__ == "__main__":
@@ -151,17 +155,4 @@ if __name__ == "__main__":
         root.destroy()
         exit()
     except Exception as e:
-        messagebox.showerror("An error occured", e)
-
-
-    """try:
-        data = ArduinoData()
-        graph_init(data)
-        #graph_animate()
-        style.use("fast")
-        animation = anim.FuncAnimation(fig, animate, interval=10, cache_frame_data=False, blit=True)
-        plt.show()
-        
-    except KeyboardInterrupt:
-        plt.close()
-        exit()"""
+        messagebox.showerror("An error occured", str(e))

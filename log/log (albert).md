@@ -35,3 +35,25 @@
 > * `eval()` moest toch `.decode()` zijn bij `monitor.readline()`
 > Oude frame update-functie verwijderd
 > Start gemaakt met `tkinter` in main.py te verwerken
+
+**2025/nov/10**:
+> Startmenu aan GUI toegevoegd, nog niet afgemaakt
+> * Moeilijkheden met data uit menu halen, to be fixed
+
+**2025/nov/12**:
+> Verder geweest met startmenu, probleem nog steeds niet opgelost
+
+**2025/nov/20**:
+> Logo gemaakt voor GUI: ![Logo](../sonar-logo.png)
+
+**2025/nov/21**:
+> GUI functionaliteit afgemaakt, werkt nu volledig, incl. openen van COM-poorten
+> * Probleem opgelost door `tk.StringVar`-class en een `.trace()`-method te gebruiken
+
+**2025/dec/01**:
+> Documentatie over installeren, etc. geschreven in README.md
+
+**2025/dec/04**:
+> Laatste bugs weggehaald
+> `./measure/measure.ino` toegevoegd, voor meten via de ultrasonische sensor
+> Redundante bestanden verplaatst of weggehaald

@@ -1,45 +1,17 @@
 #include <Servo.h>
-#include <Ultrasonic.h>
-#include <string.h>
-using namespace std;
-
-int p_yaw = 9;
-int p_sonar = 4;
-int p_pot = 0;
-int dist = 0;
-int yaw = 0;
-int pot = 0;
-float pi = 3.1415927;
-Servo servo;
-Ultrasonic sonar(p_sonar);
+Servo yaw;
 
 void setup() {
   Serial.begin(9600);
-  servo.attach(p_yaw);
+  yaw.attach(9);
+  delay(500);
 }
 
 void loop() {
-  //yaw = servo.read();
-  int dist = sonar.MeasureInCentimeters();
-  int pot = analogRead(p_pot) * 180 / 1023;
-
-  char output[1000] = "";
-  //char yawstr[1000];
-
-  //sprintf(yawstr, "%d", yaw);
-  sprintf(output, "(%d, %d)", pot, dist);
-  // (%d, %d)
-
-  /*
-  Serial.print("(");
-  //Serial.print(yawstr);
-  Serial.print(potstr);
-  Serial.print(", ");
-  Serial.print(diststr);
-  Serial.println(")");
-  */
-
-  Serial.println(output);
-
-  delay(50);
+  yaw.write(0);
+  delay(1000);
+  yaw.write(90);
+  delay(1000);
+  yaw.write(180);
+  delay(1000);
 }
